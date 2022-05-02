@@ -1,8 +1,9 @@
 import Data.Char (ord)
 import Data.Int (Int8)
+import Data.String (IsString (fromString))
 import System.Environment (getArgs, getProgName)
+import Text.Parsec (between, char, choice, many, noneOf, parse)
 import Text.Parsec.ByteString (GenParser)
-import Text.ParserCombinators.Parsec (between, char, choice, many, noneOf, oneOf)
 
 --  Brainfuck interpreter
 --  author: Brent Pappas
@@ -35,7 +36,7 @@ parseBF =
         MvLeft <$ char '<',
         PrintCell <$ char '.',
         ReadCell <$ char ',',
-        Loop <$> between (char '[') (char '[') parseBF,
+        Loop <$> between (char '[') (char ']') parseBF,
         Comment <$> noneOf literalsBF
       ]
 
@@ -100,7 +101,9 @@ main = do
   case args of
     [fn] -> do
       contents <- readFile fn
-      print contents
+      case parse parseBF "main" (fromString contents) of
+        Left pe -> print pe
+        Right bcs -> do evalBF newBFTape bcs; putStrLn ""
     _ -> do
       progName <- getProgName
-      print $ "USAGE: " ++ progName ++ " " ++ "FILENAME"
+      putStrLn $ "USAGE: " ++ progName ++ " " ++ "FILENAME"
