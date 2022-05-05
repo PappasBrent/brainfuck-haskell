@@ -3,3 +3,6 @@ main : main.hs
 
 clean:
 	rm -fr *.hi *.o main
+
+test: main
+	./main test
