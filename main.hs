@@ -2,8 +2,7 @@ import Data.Char (ord)
 import Data.Int (Int8)
 import Data.String (IsString (fromString))
 import System.Environment (getArgs, getProgName)
-import Text.Parsec (between, char, choice, many, noneOf, parse)
-import Text.Parsec.ByteString (GenParser)
+import Text.Parsec (Parsec, between, char, choice, many, noneOf, parse)
 
 --  Brainfuck interpreter
 --  author: Brent Pappas
@@ -23,7 +22,7 @@ data BFCommand
   | ReadCell
   | Comment Char
 
-parseBF :: GenParser String st [BFCommand]
+parseBF :: Parsec String st [BFCommand]
 parseBF =
   many $
     choice
